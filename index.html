@@ -2,198 +2,20 @@
 <html>
 <head>
     <title>PCAS Prototype - Pedestrian Collision Avoidance System</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: #0f0f1e;
-            font-family: 'Courier New', monospace;
-            color: white;
-            overflow-x: hidden;
-        }
-        
-        #main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #3b82f6;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #9ca3af;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-        
-        #controls {
-            background: #1a1a2e;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        
-        .control-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        button:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
-        
-        button:disabled {
-            background: #4b5563;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .scenario-info {
-            flex: 1;
-            text-align: center;
-            padding: 15px;
-            background: #111827;
-            border-radius: 8px;
-            min-width: 300px;
-        }
-        
-        .scenario-number {
-            font-size: 2em;
-            color: #3b82f6;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .scenario-desc {
-            color: #9ca3af;
-            font-size: 1em;
-        }
-        
-        label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            background: #111827;
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-size: 15px;
-        }
-        
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-        
-        #canvas-container {
-            background: #1a1a2e;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        #info-panel {
-            background: #1a1a2e;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        
-        .info-title {
-            color: #3b82f6;
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 1.4em;
-        }
-        
-        .info-list {
-            list-style: none;
-            line-height: 2;
-        }
-        
-        .info-list li {
-            color: #d1d5db;
-            font-size: 1em;
-        }
-        
-        .info-list li::before {
-            content: "• ";
-            color: #3b82f6;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        
-        .success-banner {
-            background: #10b981;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .control-row {
-                flex-direction: column;
-            }
-            
-            button {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
     <div id="main-container">
         <h1>PCAS Prototype</h1>
         <p class="subtitle">Pedestrian Collision Avoidance System - Zero Collision Guarantee</p>
         
-        <div id="success-message" class="success-banner" style="display: none;">
-            ✓ ZERO COLLISIONS ACHIEVED - System Operating Perfectly!
-        </div>
-        
         <div id="controls">
             <div class="control-row">
                 <button id="prevBtn">◄ Previous Scenario</button>
                 <div class="scenario-info">
-                    <div class="scenario-number" id="scenarioNum">Scenario 1/4</div>
-                    <div class="scenario-desc" id="scenarioDesc">Static pedestrian at y=-7m (No collision)</div>
+                    <div class="scenario-number" id="scenarioNum">Scenario 1/3</div>
+                    <div class="scenario-desc" id="scenarioDesc">Static Pedestrian in Path</div>
                 </div>
                 <button id="nextBtn">Next Scenario ►</button>
             </div>
@@ -218,11 +40,12 @@
                 <li><strong>Yellow Circle</strong> = Pedestrian (1m diameter)</li>
                 <li><strong>Red</strong> = Collision detected - system failed!</li>
                 <li><strong>Dashed Blue Line</strong> = Projected collision zone ahead of vehicle</li>
-                <li><strong>Vehicle Origin:</strong> Starts at (0, 0) moving along X-axis</li>
-                <li><strong>Pedestrian Position:</strong> Always at x=35m, various Y positions</li>
+                <li><strong>Scenario 1:</strong> Static pedestrian (0 kph) - Vehicle must stop completely</li>
+                <li><strong>Scenario 2:</strong> Pedestrian crossing into path (6 kph) - Vehicle brakes to avoid</li>
+                <li><strong>Scenario 3:</strong> Pedestrian moving away (6 kph) - No braking needed (optimal)</li>
                 <li><strong>Normal Mode:</strong> 200ms brake response time</li>
                 <li><strong>Fail-Safe Mode:</strong> 900ms brake response time (degraded braking)</li>
-                <li><strong>System Goal:</strong> ZERO collisions - vehicle stops and waits for pedestrian to clear</li>
+                <li><strong>System Goal:</strong> ZERO collisions while minimizing lost time</li>
             </ul>
         </div>
     </div>
