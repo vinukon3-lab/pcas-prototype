@@ -2,8 +2,7 @@
 <html>
 <head>
     <title>PCAS Prototype - Pedestrian Collision Avoidance System</title>
-    <script 
-src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -19,7 +18,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
         }
         
         #main-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -28,18 +27,19 @@ src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
             text-align: center;
             color: #3b82f6;
             margin-bottom: 10px;
-            font-size: 2em;
+            font-size: 2.5em;
         }
         
         .subtitle {
             text-align: center;
             color: #9ca3af;
             margin-bottom: 30px;
+            font-size: 1.1em;
         }
         
         #controls {
             background: #1a1a2e;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -47,72 +47,79 @@ src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
         
         .control-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             align-items: center;
+            justify-content: center;
         }
         
         button {
             background: #3b82f6;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 15px 30px;
+            border-radius: 8px;
             cursor: pointer;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
-            transition: background 0.3s;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
         }
         
         button:hover {
             background: #2563eb;
+            transform: translateY(-2px);
         }
         
         button:disabled {
             background: #4b5563;
             cursor: not-allowed;
+            transform: none;
         }
         
         .scenario-info {
             flex: 1;
             text-align: center;
-            padding: 10px;
+            padding: 15px;
             background: #111827;
-            border-radius: 5px;
+            border-radius: 8px;
+            min-width: 300px;
         }
         
         .scenario-number {
-            font-size: 1.5em;
+            font-size: 2em;
             color: #3b82f6;
             font-weight: bold;
+            margin-bottom: 5px;
         }
         
         .scenario-desc {
             color: #9ca3af;
-            font-size: 0.9em;
+            font-size: 1em;
         }
         
         label {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             background: #111827;
-            padding: 10px 15px;
-            border-radius: 5px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 15px;
         }
         
         input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
         }
         
         #canvas-container {
             background: #1a1a2e;
             border-radius: 10px;
-            padding: 10px;
+            padding: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             margin-bottom: 20px;
             display: flex;
@@ -121,7 +128,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
         
         #info-panel {
             background: #1a1a2e;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
@@ -129,25 +136,25 @@ src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
         .info-title {
             color: #3b82f6;
             font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-size: 1.4em;
         }
         
         .info-list {
             list-style: none;
-            line-height: 1.8;
+            line-height: 2;
         }
         
         .info-list li {
             color: #d1d5db;
-            font-size: 0.9em;
+            font-size: 1em;
         }
         
         .info-list li::before {
             content: "• ";
             color: #3b82f6;
             font-weight: bold;
-            margin-right: 8px;
+            margin-right: 10px;
         }
         
         @media (max-width: 768px) {
@@ -164,23 +171,20 @@ src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
 <body>
     <div id="main-container">
         <h1>PCAS Prototype</h1>
-        <p class="subtitle">Pedestrian Collision Avoidance System 
-Simulation</p>
+        <p class="subtitle">Pedestrian Collision Avoidance System - Real-time Simulation</p>
         
         <div id="controls">
             <div class="control-row">
-                <button id="prevBtn">◄ Previous</button>
+                <button id="prevBtn">◄ Previous Scenario</button>
                 <div class="scenario-info">
-                    <div class="scenario-number" id="scenarioNum">Scenario 
-1/10</div>
-                    <div class="scenario-desc" id="scenarioDesc">Static 
-pedestrian at y=-7m</div>
+                    <div class="scenario-number" id="scenarioNum">Scenario 1/4</div>
+                    <div class="scenario-desc" id="scenarioDesc">Static pedestrian at y=-7m (No collision)</div>
                 </div>
-                <button id="nextBtn">Next ►</button>
+                <button id="nextBtn">Next Scenario ►</button>
             </div>
             
             <div class="control-row">
-                <button id="playBtn">▶ Play</button>
+                <button id="playBtn">▶ Play Simulation</button>
                 <button id="resetBtn">↻ Reset</button>
                 <label>
                     <input type="checkbox" id="failSafeCheck">
@@ -192,19 +196,19 @@ pedestrian at y=-7m</div>
         <div id="canvas-container"></div>
         
         <div id="info-panel">
-            <div class="info-title">System Information</div>
+            <div class="info-title">System Information & Legend</div>
             <ul class="info-list">
-                <li>Blue box = Vehicle (2m wide, starts at 50 kph)</li>
-                <li>Orange box = Vehicle braking</li>
-                <li>Yellow circle = Pedestrian (0.5m diameter)</li>
-                <li>Red = Collision detected</li>
-                <li>Dashed box = Projected collision zone</li>
-                <li>Vehicle starts at origin (0,0), Pedestrian at (35m, 
-y_initial)</li>
-                <li>Normal brake response: 200ms | Fail-safe mode: 
-900ms</li>
-                <li>Maximum deceleration: 0.7g | Return acceleration: 
-0.25g</li>
+                <li><strong>Blue Rectangle</strong> = Vehicle (2m wide, 4m long) at steady state 50 kph</li>
+                <li><strong>Orange Rectangle</strong> = Vehicle actively braking (deceleration: 0.7g)</li>
+                <li><strong>Yellow Circle</strong> = Pedestrian (1m diameter)</li>
+                <li><strong>Red</strong> = Collision detected - system failed!</li>
+                <li><strong>Green Circle</strong> = Detection sensor range (monitoring pedestrian)</li>
+                <li><strong>Dashed Blue Line</strong> = Projected collision zone ahead of vehicle</li>
+                <li><strong>Vehicle Origin:</strong> Starts at (0, 0) moving along X-axis</li>
+                <li><strong>Pedestrian Position:</strong> Always at x=35m, various Y positions</li>
+                <li><strong>Normal Mode:</strong> 200ms brake response time</li>
+                <li><strong>Fail-Safe Mode:</strong> 900ms brake response time (degraded braking)</li>
+                <li><strong>System Goal:</strong> Zero collisions across all scenarios</li>
             </ul>
         </div>
     </div>
