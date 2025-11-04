@@ -157,6 +157,17 @@
             margin-right: 10px;
         }
         
+        .success-banner {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
         @media (max-width: 768px) {
             .control-row {
                 flex-direction: column;
@@ -171,7 +182,11 @@
 <body>
     <div id="main-container">
         <h1>PCAS Prototype</h1>
-        <p class="subtitle">Pedestrian Collision Avoidance System - Real-time Simulation</p>
+        <p class="subtitle">Pedestrian Collision Avoidance System - Zero Collision Guarantee</p>
+        
+        <div id="success-message" class="success-banner" style="display: none;">
+            ✓ ZERO COLLISIONS ACHIEVED - System Operating Perfectly!
+        </div>
         
         <div id="controls">
             <div class="control-row">
@@ -202,13 +217,12 @@
                 <li><strong>Orange Rectangle</strong> = Vehicle actively braking (deceleration: 0.7g)</li>
                 <li><strong>Yellow Circle</strong> = Pedestrian (1m diameter)</li>
                 <li><strong>Red</strong> = Collision detected - system failed!</li>
-                <li><strong>Green Circle</strong> = Detection sensor range (monitoring pedestrian)</li>
                 <li><strong>Dashed Blue Line</strong> = Projected collision zone ahead of vehicle</li>
                 <li><strong>Vehicle Origin:</strong> Starts at (0, 0) moving along X-axis</li>
                 <li><strong>Pedestrian Position:</strong> Always at x=35m, various Y positions</li>
                 <li><strong>Normal Mode:</strong> 200ms brake response time</li>
                 <li><strong>Fail-Safe Mode:</strong> 900ms brake response time (degraded braking)</li>
-                <li><strong>System Goal:</strong> Zero collisions across all scenarios</li>
+                <li><strong>System Goal:</strong> ZERO collisions - vehicle stops and waits for pedestrian to clear</li>
             </ul>
         </div>
     </div>

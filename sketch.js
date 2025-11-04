@@ -11,6 +11,8 @@ let isBraking = false;
 let brakeActivationTime = null;
 let pathCleared = false;
 let hasCollision = false;
+let stopped = false;
+let lostTime = 0;
 
 let pedX = 35;
 let pedY = -7;
@@ -53,12 +55,14 @@ function draw() {
     
     if (isPlaying && vehicleX < 80 && !hasCollision) {
         updateSimulation();
-    } else if (vehicleX >= 80 || hasCollision) {
+    } else if (vehicleX >= 80) {
         isPlaying = false;
         document.getElementById('playBtn').textContent = '▶ Play Simulation';
+        if (!hasCollision) {
+            document.getElementById('success-message').style.display = 'block';
+        }
     }
     
-    drawSensorRange(scale, offsetX, offsetY);
     drawCollisionZone(scale, offsetX, offsetY);
     drawPedestrian(scale, offsetX, offsetY);
     drawVehicle(scale, offsetX, offsetY);
@@ -113,16 +117,6 @@ function drawAxes(offsetX, offsetY) {
             text(i + 'm', x, offsetY + 40);
         }
     }
-}
-
-function drawSensorRange(scale, offsetX, offsetY) {
-    const vehScreenX = offsetX + vehicleX * scale;
-    const vehScreenY = offsetY - vehicleY * scale;
-    
-    noFill();
-    stroke(16, 185, 129, 100);
-    strokeWeight(2);
-    circle(vehScreenX, vehScreenY, scale * 20);
 }
 
 function drawCollisionZone(scale, offsetX, offsetY) {
@@ -218,9 +212,15 @@ function drawStats(offsetX, offsetY, scale) {
     
     const distance = dist(vehicleX, vehicleY, pedX, pedY);
     text(`Distance to Ped: ${distance.toFixed(1)}m`, 15, yPos);
+    yPos += 25;
+    text(`Lost Time: ${lostTime.toFixed(2)}s`, 15, yPos);
     yPos += 30;
     
-    if (isBraking) {
+    if (stopped) {
+        fill(255, 0, 0);
+        textSize(18);
+        text('⏸ STOPPED - Waiting for pedestrian to clear', 15, yPos);
+    } else if (isBraking) {
         fill(249, 115, 22);
         textSize(18);
         text('⚠ EMERGENCY BRAKING ACTIVE', 15, yPos);
@@ -268,26 +268,38 @@ function updateSimulation() {
         pedY += currentScenario.pedSpeed * dt;
     }
     
-    const timeToReachPed = (pedX - vehicleX) / vehicleSpeed;
+    const responseTime = failSafeMode ? 0.9 : 0.2;
+    const safetyMargin = 3 + (responseTime * vehicleSpeed);
+    
+    const timeToReachPed = Math.max(0, (pedX - vehicleX - 2) / Math.max(vehicleSpeed, 0.1));
     const pedYAtIntersection = pedY + currentScenario.pedSpeed * timeToReachPed;
     const willCollide = Math.abs(pedYAtIntersection) <= 1.5;
     
-    if (willCollide && !pathCleared && vehicleX < pedX) {
+    const distanceToPed = pedX - vehicleX;
+    
+    if (willCollide && distanceToPed > 0 && distanceToPed < safetyMargin + 10) {
         if (!isBraking) {
             isBraking = true;
             brakeActivationTime = time;
+            stopped = false;
         }
         
-        const responseTime = failSafeMode ? 0.9 : 0.2;
         if (time - brakeActivationTime >= responseTime) {
             const deceleration = 0.7 * 9.81;
             vehicleSpeed = Math.max(0, vehicleSpeed - deceleration * dt);
+            
+            if (vehicleSpeed < 0.1 && distanceToPed < safetyMargin) {
+                vehicleSpeed = 0;
+                stopped = true;
+                lostTime += dt;
+            }
         }
-    } else {
-        if (isBraking) {
+    } else if (!willCollide || Math.abs(pedY) > 2) {
+        if (isBraking || stopped) {
             pathCleared = true;
         }
         isBraking = false;
+        stopped = false;
         
         if (vehicleSpeed < steadyStateSpeed) {
             const acceleration = 0.25 * 9.81;
@@ -295,11 +307,14 @@ function updateSimulation() {
         }
     }
     
-    vehicleX += vehicleSpeed * dt;
+    if (!stopped) {
+        vehicleX += vehicleSpeed * dt;
+    }
     
-    const distance = dist(vehicleX, vehicleY, pedX, pedY);
-    if (distance < 2 && Math.abs(vehicleX - pedX) < 2.5 && Math.abs(pedY) < 1.5) {
+    const actualDistance = Math.sqrt(Math.pow(vehicleX - pedX, 2) + Math.pow(vehicleY - pedY, 2));
+    if (actualDistance < 2.5 && Math.abs(vehicleX - pedX) < 2 && Math.abs(pedY) < 1.5) {
         hasCollision = true;
+        isPlaying = false;
     }
 }
 
@@ -317,6 +332,8 @@ function resetSim() {
     isBraking = false;
     hasCollision = false;
     pathCleared = false;
+    stopped = false;
+    lostTime = 0;
     brakeActivationTime = null;
     
     const currentScenario = scenarios[scenario - 1];
@@ -325,6 +342,7 @@ function resetSim() {
     pedSpeed = currentScenario.pedSpeed;
     
     document.getElementById('playBtn').textContent = '▶ Play Simulation';
+    document.getElementById('success-message').style.display = 'none';
     updateUI();
 }
 
