@@ -97,8 +97,20 @@ const scenarios = [
         pedDirection: 1,
         desc: "Slow Pedestrian Crossing",
         detail: "Moving at 3 kph from y=-6m (slow crossing)"
+    },
+    { 
+        id: 11, 
+        pedSpeed: 0, 
+        pedYStart: 0, 
+        pedDirection: 0,
+        desc: "Custom Scenario",
+        detail: "User-defined pedestrian speed and distance",
+        isCustom: true
     }
 ];
+
+let customPedSpeed = 0;
+let customPedDistance = 35;
 
 function setup() {
     let canvas = createCanvas(1200, 600);
@@ -117,6 +129,16 @@ function setup() {
         scenario = parseInt(e.target.value);
         resetSim();
         updateUI();
+    });
+
+    document.getElementById('customSpeedInput').addEventListener('input', (e) => {
+        customPedSpeed = parseFloat(e.target.value) / 3.6;
+        if (scenario === 11) resetSim();
+    });
+
+    document.getElementById('customDistanceInput').addEventListener('input', (e) => {
+        customPedDistance = parseFloat(e.target.value);
+        if (scenario === 11) resetSim();
     });
     
     resetSim();
@@ -417,9 +439,9 @@ function resetSim() {
     brakeActivationTime = null;
     
     const currentScenario = scenarios[scenario - 1];
-    pedX = 35;
+    pedX = currentScenario.isCustom ? customPedDistance : 35;
     pedY = currentScenario.pedYStart;
-    pedSpeed = currentScenario.pedSpeed;
+    pedSpeed = currentScenario.isCustom ? customPedSpeed : currentScenario.pedSpeed;
     pedDirection = currentScenario.pedDirection;
     
     document.getElementById('playBtn').textContent = '▶ Play Simulation';
@@ -427,19 +449,26 @@ function resetSim() {
 }
 
 function changeScenario(direction) {
-    scenario = constrain(scenario + direction, 1, 10);
+    scenario = constrain(scenario + direction, 1, 11);
     resetSim();
     updateUI();
 }
 
 function updateUI() {
     const currentScenario = scenarios[scenario - 1];
-    document.getElementById('scenarioNum').textContent = `Scenario ${scenario}/10`;
+    document.getElementById('scenarioNum').textContent = `Scenario ${scenario}/11`;
     document.getElementById('scenarioDesc').textContent = currentScenario.desc;
     document.getElementById('scenarioSelect').value = scenario;
     
+    const customInputs = document.getElementById('customInputs');
+    if (scenario === 11) {
+        customInputs.style.display = 'flex';
+    } else {
+        customInputs.style.display = 'none';
+    }
+    
     document.getElementById('prevBtn').disabled = scenario === 1;
-    document.getElementById('nextBtn').disabled = scenario === 10;
+    document.getElementById('nextBtn').disabled = scenario === 11;
 }
 
 function keyPressed() {
