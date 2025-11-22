@@ -14,10 +14,26 @@
             <div class="control-row">
                 <button id="prevBtn">◄ Previous Scenario</button>
                 <div class="scenario-info">
-                    <div class="scenario-number" id="scenarioNum">Scenario 1/3</div>
-                    <div class="scenario-desc" id="scenarioDesc">Static Pedestrian in Path</div>
+                    <div class="scenario-number" id="scenarioNum">Scenario 1/10</div>
+                    <div class="scenario-desc" id="scenarioDesc">Static Pedestrian Center</div>
                 </div>
                 <button id="nextBtn">Next Scenario ►</button>
+            </div>
+
+            <div class="control-row">
+                <label for="scenarioSelect">Jump to Scenario:</label>
+                <select id="scenarioSelect">
+                    <option value="1">1 - Static Pedestrian Center</option>
+                    <option value="2">2 - Pedestrian Crossing Into Path</option>
+                    <option value="3">3 - Pedestrian Moving Away</option>
+                    <option value="4">4 - Pedestrian Far Left Entry</option>
+                    <option value="5">5 - Pedestrian Far Right Entry</option>
+                    <option value="6">6 - Static Pedestrian Left Side</option>
+                    <option value="7">7 - Static Pedestrian Right Side</option>
+                    <option value="8">8 - Fast Pedestrian Crossing</option>
+                    <option value="9">9 - Pedestrian At Center Moving</option>
+                    <option value="10">10 - Slow Pedestrian Crossing</option>
+                </select>
             </div>
             
             <div class="control-row">
@@ -40,12 +56,10 @@
                 <li><strong>Yellow Circle</strong> = Pedestrian (1m diameter)</li>
                 <li><strong>Red</strong> = Collision detected - system failed!</li>
                 <li><strong>Dashed Blue Line</strong> = Projected collision zone ahead of vehicle</li>
-                <li><strong>Scenario 1:</strong> Static pedestrian (0 kph) - Vehicle must stop completely</li>
-                <li><strong>Scenario 2:</strong> Pedestrian crossing into path (6 kph) - Vehicle brakes to avoid</li>
-                <li><strong>Scenario 3:</strong> Pedestrian moving away (6 kph) - No braking needed (optimal)</li>
                 <li><strong>Normal Mode:</strong> 200ms brake response time</li>
                 <li><strong>Fail-Safe Mode:</strong> 900ms brake response time (degraded braking)</li>
                 <li><strong>System Goal:</strong> ZERO collisions while minimizing lost time</li>
+                <li><strong>Test Coverage:</strong> 10 scenarios covering static, moving, and edge cases</li>
             </ul>
         </div>
     </div>

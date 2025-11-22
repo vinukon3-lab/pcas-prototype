@@ -2,7 +2,6 @@ let scenario = 1;
 let isPlaying = false;
 let time = 0;
 let failSafeMode = false;
-
 let vehicleX = 0;
 let vehicleY = 0;
 let vehicleSpeed = 13.9;
@@ -13,7 +12,6 @@ let pathCleared = false;
 let hasCollision = false;
 let stopped = false;
 let lostTime = 0;
-
 let pedX = 35;
 let pedY = 0;
 let pedSpeed = 0;
@@ -25,24 +23,80 @@ const scenarios = [
         pedSpeed: 0, 
         pedYStart: 0, 
         pedDirection: 0,
-        desc: "Static Pedestrian in Path - Standing still at y=0m",
-        detail: "Vehicle must detect and stop completely before collision"
+        desc: "Static Pedestrian Center",
+        detail: "Standing still at y=0m - direct path"
     },
     { 
         id: 2, 
         pedSpeed: 1.67, 
         pedYStart: -5, 
         pedDirection: 1,
-        desc: "Pedestrian Crossing Into Path - Moving at 6 kph from y=-5m",
-        detail: "Vehicle must predict collision and brake appropriately"
+        desc: "Pedestrian Crossing Into Path",
+        detail: "Moving at 6 kph from y=-5m toward vehicle"
     },
     { 
         id: 3, 
         pedSpeed: 1.67, 
         pedYStart: 5, 
+        pedDirection: -1,
+        desc: "Pedestrian Moving Away",
+        detail: "Moving at 6 kph from y=5m away from path"
+    },
+    { 
+        id: 4, 
+        pedSpeed: 1.67, 
+        pedYStart: -7, 
         pedDirection: 1,
-        desc: "Pedestrian Moving Away - Moving at 6 kph from y=5m",
-        detail: "No collision predicted - maintain steady state velocity"
+        desc: "Pedestrian Far Left Entry",
+        detail: "Moving at 6 kph from y=-7m into path"
+    },
+    { 
+        id: 5, 
+        pedSpeed: 1.67, 
+        pedYStart: 7, 
+        pedDirection: 1,
+        desc: "Pedestrian Far Right Entry",
+        detail: "Moving at 6 kph from y=7m into path"
+    },
+    { 
+        id: 6, 
+        pedSpeed: 0, 
+        pedYStart: -2, 
+        pedDirection: 0,
+        desc: "Static Pedestrian Left Side",
+        detail: "Standing still at y=-2m near path edge"
+    },
+    { 
+        id: 7, 
+        pedSpeed: 0, 
+        pedYStart: 2, 
+        pedDirection: 0,
+        desc: "Static Pedestrian Right Side",
+        detail: "Standing still at y=2m near path edge"
+    },
+    { 
+        id: 8, 
+        pedSpeed: 3.33, 
+        pedYStart: -3, 
+        pedDirection: 1,
+        desc: "Fast Pedestrian Crossing",
+        detail: "Moving at 12 kph from y=-3m (maximum speed)"
+    },
+    { 
+        id: 9, 
+        pedSpeed: 1.67, 
+        pedYStart: 0, 
+        pedDirection: 1,
+        desc: "Pedestrian At Center Moving",
+        detail: "Moving at 6 kph starting from y=0m"
+    },
+    { 
+        id: 10, 
+        pedSpeed: 0.833, 
+        pedYStart: -6, 
+        pedDirection: 1,
+        desc: "Slow Pedestrian Crossing",
+        detail: "Moving at 3 kph from y=-6m (slow crossing)"
     }
 ];
 
@@ -57,6 +111,12 @@ function setup() {
     document.getElementById('failSafeCheck').addEventListener('change', (e) => {
         failSafeMode = e.target.checked;
         resetSim();
+    });
+    
+    document.getElementById('scenarioSelect').addEventListener('change', (e) => {
+        scenario = parseInt(e.target.value);
+        resetSim();
+        updateUI();
     });
     
     resetSim();
@@ -277,7 +337,7 @@ function updateSimulation() {
     const brakingDistance = (vehicleSpeed * vehicleSpeed) / (2 * 0.7 * 9.81);
     const requiredStopDistance = brakingDistance + (responseTime * vehicleSpeed) + safetyBuffer;
     
-    if (scenario === 1) {
+    if (currentScenario.pedSpeed === 0) {
         if (distanceToPed < requiredStopDistance && distanceToPed > 0) {
             if (!isBraking) {
                 isBraking = true;
@@ -295,7 +355,7 @@ function updateSimulation() {
                 }
             }
         }
-    } else if (scenario === 2) {
+    } else {
         if (willCollide && distanceToPed < requiredStopDistance && distanceToPed > 0) {
             if (!isBraking) {
                 isBraking = true;
@@ -319,9 +379,6 @@ function updateSimulation() {
             isBraking = false;
             stopped = false;
         }
-    } else if (scenario === 3) {
-        isBraking = false;
-        stopped = false;
     }
     
     if (!isBraking && vehicleSpeed < steadyStateSpeed) {
@@ -370,18 +427,19 @@ function resetSim() {
 }
 
 function changeScenario(direction) {
-    scenario = constrain(scenario + direction, 1, 3);
+    scenario = constrain(scenario + direction, 1, 10);
     resetSim();
     updateUI();
 }
 
 function updateUI() {
     const currentScenario = scenarios[scenario - 1];
-    document.getElementById('scenarioNum').textContent = `Scenario ${scenario}/3`;
+    document.getElementById('scenarioNum').textContent = `Scenario ${scenario}/10`;
     document.getElementById('scenarioDesc').textContent = currentScenario.desc;
+    document.getElementById('scenarioSelect').value = scenario;
     
     document.getElementById('prevBtn').disabled = scenario === 1;
-    document.getElementById('nextBtn').disabled = scenario === 3;
+    document.getElementById('nextBtn').disabled = scenario === 10;
 }
 
 function keyPressed() {
