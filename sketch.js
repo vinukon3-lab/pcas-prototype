@@ -258,66 +258,71 @@ function drawStats(offsetX, offsetY, scale) {
     noStroke();
     textSize(16);
     textAlign(LEFT);
-    
+
     let yPos = 30;
-    text(`Time: ${time.toFixed(2)}s`, 15, yPos);
+
+    text("Time: " + time.toFixed(2) + "s", 15, yPos);
     yPos += 25;
-    text(`Vehicle X: ${vehicleX.toFixed(1)}m`, 15, yPos);
+    text("Vehicle X: " + vehicleX.toFixed(1) + "m", 15, yPos);
     yPos += 25;
-    text(`Speed: ${(vehicleSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
+    text("Speed: " + (vehicleSpeed * 3.6).toFixed(1) + " kph", 15, yPos);
     yPos += 25;
-    text(`Pedestrian: (${pedX.toFixed(1)}m, ${pedY.toFixed(1)}m)`, 15, yPos);
+    text("Pedestrian: (" + pedX.toFixed(1) + "m, " + pedY.toFixed(1) + "m)", 15, yPos);
     yPos += 25;
-    text(`Ped Speed: ${(pedSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
+    text("Ped Speed: " + (pedSpeed * 3.6).toFixed(1) + " kph", 15, yPos);
     yPos += 25;
-    
-    const distance = Math.sqrt(Math.pow(vehicleX - pedX, 2) + Math.pow(vehicleY - pedY, 2));
-    text(`Distance to Ped: ${distance.toFixed(1)}m`, 15, yPos);
+
+    const distance = Math.sqrt((vehicleX - pedX)**2 + (vehicleY - pedY)**2);
+    text("Distance to Ped: " + distance.toFixed(1) + "m", 15, yPos);
     yPos += 25;
-    text(`Lost Time: ${lostTime.toFixed(2)}s`, 15, yPos);
+
+    text("Lost Time: " + lostTime.toFixed(2) + "s", 15, yPos);
     yPos += 30;
-    
+
     if (stopped) {
         fill(255, 0, 0);
         textSize(18);
-        text('⏸ STOPPED - Waiting for pedestrian', 15, yPos);
+        text("⏸ STOPPED - Waiting for pedestrian", 15, yPos);
     } else if (isBraking) {
         fill(249, 115, 22);
         textSize(18);
-        text('⚠ EMERGENCY BRAKING ACTIVE', 15, yPos);
+        text("⚠ EMERGENCY BRAKING ACTIVE", 15, yPos);
         yPos += 25;
         fill(255);
         textSize(14);
-        text(`Brake delay: ${failSafeMode ? '900ms' : '200ms'}`, 15, yPos);
+        text("Brake delay: " + (failSafeMode ? "900ms" : "200ms"), 15, yPos);
     } else if (pathCleared) {
         fill(16, 185, 129);
         textSize(18);
-        text('✓ Path Clear - Resuming Speed', 15, yPos);
+        text("✓ Path Clear - Resuming Speed", 15, yPos);
     } else {
         fill(16, 185, 129);
         textSize(16);
-        text('● Monitoring Path...', 15, yPos);
+        text("● Monitoring Path...", 15, yPos);
     }
-    
+
     if (hasCollision) {
         fill(239, 68, 68);
         textSize(32);
         textAlign(CENTER);
-        text('⚠ COLLISION DETECTED!', width / 2, 60);
+        text("⚠ COLLISION DETECTED!", width / 2, 60);
         textSize(20);
-        text('System Failed - Zero Collision Requirement Violated', width / 2, 95);
+        text("System Failed - Zero Collision Requirement Violated", width / 2, 95);
     }
-    
+
     fill(failSafeMode ? color(239, 68, 68) : color(16, 185, 129));
     textSize(14);
     textAlign(RIGHT);
-    text(failSafeMode ? 'FAIL-SAFE MODE (900ms)' : 'NORMAL MODE (200ms)', width - 15, 30);
-    
+
+    text(failSafeMode ? "FAIL-SAFE MODE (900ms)" : "NORMAL MODE (200ms)", width - 15, 30);
+
     const responseTime = failSafeMode ? 0.9 : 0.2;
+
     fill(200, 200, 220);
-    text(`Brake Response: ${(responseTime * 1000).toFixed(0)}ms`, width - 15, 55);
-    text('Max Decel: 0.7g', width - 15, 80);
+    text("Brake Response: " + (responseTime * 1000).toFixed(0) + "ms", width - 15, 55);
+    text("Max Decel: 0.7g", width - 15, 80);
 }
+
 function updateSimulation() {
     const dt = 0.016;
     time += dt;
@@ -337,7 +342,8 @@ function updateSimulation() {
         timeToReachPed = (pedX - vehicleX - 2) / vehicleSpeed;
     }
     
-    const pedYAtIntersection = pedY + (currentScenario.pedSpeed * currentScenario.pedDirection * timeToReachPed);
+    // FIXED: Use actual pedSpeed and pedDirection instead of scenario values
+    const pedYAtIntersection = pedY + (pedSpeed * pedDirection * timeToReachPed);
     
     const collisionThreshold = 1.8;
     const willCollide = Math.abs(pedYAtIntersection) <= collisionThreshold && timeToReachPed > 0 && timeToReachPed < 10;
@@ -347,7 +353,8 @@ function updateSimulation() {
     const brakingDistance = (vehicleSpeed * vehicleSpeed) / (2 * 0.7 * 9.81);
     const requiredStopDistance = brakingDistance + (responseTime * vehicleSpeed) + safetyBuffer;
     
-    if (currentScenario.pedSpeed === 0) {
+    // FIXED: Check actual pedSpeed instead of scenario pedSpeed
+    if (pedSpeed === 0) {
         if (distanceToPed < requiredStopDistance && distanceToPed > 0) {
             if (!isBraking) {
                 isBraking = true;
@@ -430,7 +437,8 @@ function resetSim() {
     pedSpeed = currentScenario.isCustom ? customPedSpeed : currentScenario.pedSpeed;
     // For custom scenario with speed > 0, default to moving toward path (direction = 1)
     // If pedestrian starts at y=0 with speed, they'll move upward
-    pedDirection = currentScenario.isCustom ? (customPedSpeed > 0 ? 1 : 0) : currentScenario.pedDirection;
+    // pedDirection = currentScenario.isCustom ? (customPedSpeed > 0 ? 1 : 0) : currentScenario.pedDirection;
+    pedDirection = currentScenario.isCustom ? 1 : currentScenario.pedDirection;
     
     document.getElementById('playBtn').textContent = '▶ Play Simulation';
     updateUI();
