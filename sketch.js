@@ -337,8 +337,11 @@ function updateSimulation() {
     
     const currentScenario = scenarios[scenario - 1];
     
-    if (currentScenario.pedSpeed > 0) {
-        pedY += currentScenario.pedSpeed * currentScenario.pedDirection * dt;
+    // if (currentScenario.pedSpeed > 0) {
+    //     pedY += currentScenario.pedSpeed * currentScenario.pedDirection * dt;
+    // }
+    if (pedSpeed > 0) {
+        pedY += pedSpeed * pedDirection * dt;
     }
     
     const responseTime = failSafeMode ? 0.9 : 0.2;
