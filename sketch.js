@@ -260,21 +260,21 @@ function drawStats(offsetX, offsetY, scale) {
     textAlign(LEFT);
     
     let yPos = 30;
-    text`Time: ${time.toFixed(2)}s`, 15, yPos);
+    text(`Time: ${time.toFixed(2)}s`, 15, yPos);
     yPos += 25;
-    text`Vehicle X: ${vehicleX.toFixed(1)}m`, 15, yPos);
+    text(`Vehicle X: ${vehicleX.toFixed(1)}m`, 15, yPos);
     yPos += 25;
-    text`Speed: ${(vehicleSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
+    text(`Speed: ${(vehicleSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
     yPos += 25;
-    text`Pedestrian: (${pedX.toFixed(1)}m, ${pedY.toFixed(1)}m)`, 15, yPos);
+    text(`Pedestrian: (${pedX.toFixed(1)}m, ${pedY.toFixed(1)}m)`, 15, yPos);
     yPos += 25;
-    text`Ped Speed: ${(pedSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
+    text(`Ped Speed: ${(pedSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
     yPos += 25;
     
     const distance = Math.sqrt(Math.pow(vehicleX - pedX, 2) + Math.pow(vehicleY - pedY, 2));
-    text`Distance to Ped: ${distance.toFixed(1)}m`, 15, yPos);
+    text(`Distance to Ped: ${distance.toFixed(1)}m`, 15, yPos);
     yPos += 25;
-    text`Lost Time: ${lostTime.toFixed(2)}s`, 15, yPos);
+    text(`Lost Time: ${lostTime.toFixed(2)}s`, 15, yPos);
     yPos += 30;
     
     if (stopped) {
@@ -288,7 +288,7 @@ function drawStats(offsetX, offsetY, scale) {
         yPos += 25;
         fill(255);
         textSize(14);
-        text`Brake delay: ${failSafeMode ? '900ms' : '200ms'}`, 15, yPos);
+        text(`Brake delay: ${failSafeMode ? '900ms' : '200ms'}`, 15, yPos);
     } else if (pathCleared) {
         fill(16, 185, 129);
         textSize(18);
@@ -315,8 +315,8 @@ function drawStats(offsetX, offsetY, scale) {
     
     const responseTime = failSafeMode ? 0.9 : 0.2;
     fill(200, 200, 220);
-    text`Brake Response: ${(responseTime * 1000).toFixed(0)}ms`, width - 15, 55);
-    text`Max Decel: 0.7g`, width - 15, 80);
+    text(`Brake Response: ${(responseTime * 1000).toFixed(0)}ms`, width - 15, 55);
+    text('Max Decel: 0.7g', width - 15, 80);
 }
 function updateSimulation() {
     const dt = 0.016;
