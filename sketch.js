@@ -16,7 +16,6 @@ let pedX = 35;
 let pedY = 0;
 let pedSpeed = 0;
 let pedDirection = 1;
-
 const scenarios = [
     { 
         id: 1, 
@@ -108,10 +107,8 @@ const scenarios = [
         isCustom: true
     }
 ];
-
 let customPedSpeed = 0;
 let customPedDistance = 35;
-
 function setup() {
     let canvas = createCanvas(1200, 600);
     canvas.parent('canvas-container');
@@ -130,12 +127,10 @@ function setup() {
         resetSim();
         updateUI();
     });
-
     document.getElementById('customSpeedInput').addEventListener('input', (e) => {
         customPedSpeed = parseFloat(e.target.value) / 3.6;
         if (scenario === 11) resetSim();
     });
-
     document.getElementById('customDistanceInput').addEventListener('input', (e) => {
         customPedDistance = parseFloat(e.target.value);
         if (scenario === 11) resetSim();
@@ -144,7 +139,6 @@ function setup() {
     resetSim();
     updateUI();
 }
-
 function draw() {
     background(20, 20, 35);
     
@@ -167,7 +161,6 @@ function draw() {
     drawVehicle(scale, offsetX, offsetY);
     drawStats(offsetX, offsetY, scale);
 }
-
 function drawRoad(scale, offsetX, offsetY) {
     fill(35, 40, 50);
     noStroke();
@@ -179,7 +172,6 @@ function drawRoad(scale, offsetX, offsetY) {
         line(x, offsetY, x + 20, offsetY);
     }
 }
-
 function drawAxes(offsetX, offsetY) {
     stroke(100, 110, 130);
     strokeWeight(3);
@@ -205,7 +197,6 @@ function drawAxes(offsetX, offsetY) {
         }
     }
 }
-
 function drawCollisionZone(scale, offsetX, offsetY) {
     if (vehicleX < 50) {
         stroke(isBraking ? color(249, 115, 22, 200) : color(59, 130, 246, 150));
@@ -221,7 +212,6 @@ function drawCollisionZone(scale, offsetX, offsetY) {
         drawingContext.setLineDash([]);
     }
 }
-
 function drawPedestrian(scale, offsetX, offsetY) {
     const pedScreenX = offsetX + pedX * scale;
     const pedScreenY = offsetY - pedY * scale;
@@ -250,7 +240,6 @@ function drawPedestrian(scale, offsetX, offsetY) {
         line(pedScreenX, arrowY - scale * 0.8, pedScreenX + scale * 0.2, arrowY - scale * 0.6);
     }
 }
-
 function drawVehicle(scale, offsetX, offsetY) {
     const vehScreenX = offsetX + vehicleX * scale;
     const vehScreenY = offsetY - vehicleY * scale;
@@ -264,7 +253,6 @@ function drawVehicle(scale, offsetX, offsetY) {
         scale * 3
     );
 }
-
 function drawStats(offsetX, offsetY, scale) {
     fill(255);
     noStroke();
@@ -272,21 +260,21 @@ function drawStats(offsetX, offsetY, scale) {
     textAlign(LEFT);
     
     let yPos = 30;
-    text(`Time: ${time.toFixed(2)}s`, 15, yPos);
+    text`Time: ${time.toFixed(2)}s`, 15, yPos);
     yPos += 25;
-    text(`Vehicle X: ${vehicleX.toFixed(1)}m`, 15, yPos);
+    text`Vehicle X: ${vehicleX.toFixed(1)}m`, 15, yPos);
     yPos += 25;
-    text(`Speed: ${(vehicleSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
+    text`Speed: ${(vehicleSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
     yPos += 25;
-    text(`Pedestrian: (${pedX.toFixed(1)}m, ${pedY.toFixed(1)}m)`, 15, yPos);
+    text`Pedestrian: (${pedX.toFixed(1)}m, ${pedY.toFixed(1)}m)`, 15, yPos);
     yPos += 25;
-    text(`Ped Speed: ${(pedSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
+    text`Ped Speed: ${(pedSpeed * 3.6).toFixed(1)} kph`, 15, yPos);
     yPos += 25;
     
     const distance = Math.sqrt(Math.pow(vehicleX - pedX, 2) + Math.pow(vehicleY - pedY, 2));
-    text(`Distance to Ped: ${distance.toFixed(1)}m`, 15, yPos);
+    text`Distance to Ped: ${distance.toFixed(1)}m`, 15, yPos);
     yPos += 25;
-    text(`Lost Time: ${lostTime.toFixed(2)}s`, 15, yPos);
+    text`Lost Time: ${lostTime.toFixed(2)}s`, 15, yPos);
     yPos += 30;
     
     if (stopped) {
@@ -300,7 +288,7 @@ function drawStats(offsetX, offsetY, scale) {
         yPos += 25;
         fill(255);
         textSize(14);
-        text(`Brake delay: ${failSafeMode ? '900ms' : '200ms'}`, 15, yPos);
+        text`Brake delay: ${failSafeMode ? '900ms' : '200ms'}`, 15, yPos);
     } else if (pathCleared) {
         fill(16, 185, 129);
         textSize(18);
@@ -327,19 +315,16 @@ function drawStats(offsetX, offsetY, scale) {
     
     const responseTime = failSafeMode ? 0.9 : 0.2;
     fill(200, 200, 220);
-    text(`Brake Response: ${(responseTime * 1000).toFixed(0)}ms`, width - 15, 55);
-    text(`Max Decel: 0.7g`, width - 15, 80);
+    text`Brake Response: ${(responseTime * 1000).toFixed(0)}ms`, width - 15, 55);
+    text`Max Decel: 0.7g`, width - 15, 80);
 }
-
 function updateSimulation() {
     const dt = 0.016;
     time += dt;
     
     const currentScenario = scenarios[scenario - 1];
     
-    // if (currentScenario.pedSpeed > 0) {
-    //     pedY += currentScenario.pedSpeed * currentScenario.pedDirection * dt;
-    // }
+    // Update pedestrian position based on speed and direction
     if (pedSpeed > 0) {
         pedY += pedSpeed * pedDirection * dt;
     }
@@ -422,12 +407,10 @@ function updateSimulation() {
         vehicleSpeed = 0;
     }
 }
-
 function togglePlay() {
     isPlaying = !isPlaying;
     document.getElementById('playBtn').textContent = isPlaying ? '⏸ Pause' : '▶ Play Simulation';
 }
-
 function resetSim() {
     isPlaying = false;
     time = 0;
@@ -445,18 +428,18 @@ function resetSim() {
     pedX = currentScenario.isCustom ? customPedDistance : 35;
     pedY = currentScenario.pedYStart;
     pedSpeed = currentScenario.isCustom ? customPedSpeed : currentScenario.pedSpeed;
-    pedDirection = currentScenario.pedDirection;
+    // For custom scenario with speed > 0, default to moving toward path (direction = 1)
+    // If pedestrian starts at y=0 with speed, they'll move upward
+    pedDirection = currentScenario.isCustom ? (customPedSpeed > 0 ? 1 : 0) : currentScenario.pedDirection;
     
     document.getElementById('playBtn').textContent = '▶ Play Simulation';
     updateUI();
 }
-
 function changeScenario(direction) {
     scenario = constrain(scenario + direction, 1, 11);
     resetSim();
     updateUI();
 }
-
 function updateUI() {
     const currentScenario = scenarios[scenario - 1];
     document.getElementById('scenarioNum').textContent = `Scenario ${scenario}/11`;
@@ -473,7 +456,6 @@ function updateUI() {
     document.getElementById('prevBtn').disabled = scenario === 1;
     document.getElementById('nextBtn').disabled = scenario === 11;
 }
-
 function keyPressed() {
     if (key === ' ') togglePlay();
     if (key === 'r' || key === 'R') resetSim();
